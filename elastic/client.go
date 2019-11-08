@@ -20,26 +20,26 @@ func init() {
 		log.WithField("method", "elastic.client.init").Fatal(err)
 	}
 
-	exists, err := client.IndexExists(config.GlobalConfig.BookingIndex).Do(context.Background())
+	lessonsExists, err := client.IndexExists(config.GlobalConfig.LessonsIndex).Do(context.Background())
 	if err != nil {
 		log.WithField("method", "elastic.client.init").Fatal(err)
 	}
-	if !exists {
+	if !lessonsExists {
 		// need for sorting, if there are no this fields in start mapping, app will break down, other part will be created automatically
 		mapping := `{"mappings":{"properties":{"time":{"type":"date"}, "id":{"type": "long"}}}}`
-		_, err = client.CreateIndex(config.GlobalConfig.BookingIndex).BodyString(mapping).Do(context.Background())
+		_, err = client.CreateIndex(config.GlobalConfig.LessonsIndex).BodyString(mapping).Do(context.Background())
 		if err != nil {
 			log.WithField("method", "elastic.client.init").Fatal(err)
 		}
 	}
-	existsUser, err := client.IndexExists(config.GlobalConfig.UserIndex).Do(context.Background())
+	studentsExists, err := client.IndexExists(config.GlobalConfig.StudentsIndex).Do(context.Background())
 	if err != nil {
 		log.WithField("method", "elastic.client.init").Fatal(err)
 	}
-	if !existsUser {
+	if !studentsExists {
 		// need for sorting, if there is no this field in start mapping, app will break down, other part will be created automatically
 		mapping := `{"mappings":{"properties":{"id":{"type":"long"}}}}`
-		_, err = client.CreateIndex(config.GlobalConfig.UserIndex).BodyString(mapping).Do(context.Background())
+		_, err = client.CreateIndex(config.GlobalConfig.StudentsIndex).BodyString(mapping).Do(context.Background())
 		if err != nil {
 			log.WithField("method", "elastic.client.init").Fatal(err)
 		}
