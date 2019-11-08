@@ -73,3 +73,16 @@ func (r *request) CreateStudent() error {
 	}
 	return nil
 }
+
+func (r *request) DeleteStudent() error {
+	_, err := client.GetClient().Delete().
+		Index(config.GlobalConfig.StudentsIndex).
+		Id(strconv.Itoa(int(r.id))).
+		Refresh("true").
+		Do(context.Background())
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+	return nil
+}
