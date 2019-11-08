@@ -4,15 +4,15 @@ import (
 	"context"
 	"encoding/json"
 	"strconv"
+	"students_rest_api/models/student"
 
 	"students_rest_api/config"
 	client "students_rest_api/elastic"
-	"students_rest_api/models"
 
 	log "github.com/sirupsen/logrus"
 )
 
-func (r *request) GetStudent() *models.Student {
+func (r *request) GetStudent() *student.Student {
 	hits, err := client.GetClient().Search().
 		Query(r.buildSearchQuery()).
 		Size(1).
@@ -22,7 +22,7 @@ func (r *request) GetStudent() *models.Student {
 		log.WithField("method", "GetStudent").Error(err)
 	}
 
-	var res *models.Student
+	var res *student.Student
 	if hits.TotalHits() == 0 {
 		return nil
 	}
@@ -34,7 +34,7 @@ func (r *request) GetStudent() *models.Student {
 	return res
 }
 
-func (r *request) ListStudents() []*models.Student {
+func (r *request) ListStudents() []*student.Student {
 	hits, err := client.GetClient().Search().
 		Query(r.buildSearchQuery()).
 		Size(500).
@@ -44,12 +44,12 @@ func (r *request) ListStudents() []*models.Student {
 		log.WithField("method", "ListStudents").Error(err)
 	}
 
-	var res []*models.Student
+	var res []*student.Student
 	if hits.TotalHits() == 0 {
 		return res
 	}
 	for _, hit := range hits.Hits.Hits {
-		singleRes := &models.Student{}
+		singleRes := &student.Student{}
 		err = json.Unmarshal(hit.Source, &singleRes)
 		if err != nil {
 			log.WithField("method", "ListStudents").Error(err)
