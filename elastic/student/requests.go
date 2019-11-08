@@ -3,6 +3,7 @@ package student
 import (
 	"context"
 	"encoding/json"
+	"strconv"
 
 	"students_rest_api/config"
 	client "students_rest_api/elastic"
@@ -13,7 +14,7 @@ import (
 
 func (r *request) GetStudent() *models.Student {
 	hits, err := client.GetClient().Search().
-		Query(r.buildQuery()).
+		Query(r.buildSearchQuery()).
 		Size(1).
 		Index(config.GlobalConfig.StudentsIndex).
 		Do(context.Background())
@@ -35,7 +36,7 @@ func (r *request) GetStudent() *models.Student {
 
 func (r *request) ListStudents() []*models.Student {
 	hits, err := client.GetClient().Search().
-		Query(r.buildQuery()).
+		Query(r.buildSearchQuery()).
 		Size(500).
 		Index(config.GlobalConfig.StudentsIndex).
 		Do(context.Background())
@@ -57,4 +58,18 @@ func (r *request) ListStudents() []*models.Student {
 		res = append(res, singleRes)
 	}
 	return res
+}
+
+func (r *request) CreateStudent() error {
+	_, err := client.GetClient().Index().
+		Index(config.GlobalConfig.StudentsIndex).
+		BodyJson(r.bodyJSON).
+		Id(strconv.Itoa(int(r.id))).
+		Refresh("true").
+		Do(context.Background())
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+	return nil
 }
