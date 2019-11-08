@@ -12,7 +12,25 @@ import (
 )
 
 func (r *request) GetStudent() *models.Student {
+	hits, err := client.GetClient().Search().
+		Query(r.buildQuery()).
+		Size(1).
+		Index(config.GlobalConfig.StudentsIndex).
+		Do(context.Background())
+	if err != nil {
+		log.WithField("method", "GetStudent").Error(err)
+	}
 
+	var res *models.Student
+	if hits.TotalHits() == 0 {
+		return nil
+	}
+	err = json.Unmarshal(hits.Hits.Hits[0].Source, &res)
+	if err != nil {
+		log.WithField("method", "GetStudent").Error(err)
+		return nil
+	}
+	return res
 }
 
 func (r *request) ListStudents() []*models.Student {
