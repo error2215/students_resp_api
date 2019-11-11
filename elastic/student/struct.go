@@ -1,9 +1,9 @@
 package student
 
 import (
-	"encoding/json"
-
 	"github.com/olivere/elastic/v7"
+
+	model "students_rest_api/models/student"
 )
 
 type request struct {
@@ -11,8 +11,8 @@ type request struct {
 }
 
 type queryParams struct {
-	id       int32
-	bodyJSON json.RawMessage
+	id   int32
+	body *model.Student
 }
 
 const (
@@ -28,8 +28,8 @@ func (r *request) Id(id int32) *request {
 	return r
 }
 
-func (r *request) BodyJSON(bodyJSON json.RawMessage) *request {
-	r.bodyJSON = bodyJSON
+func (r *request) Body(body *model.Student) *request {
+	r.body = body
 	return r
 }
 

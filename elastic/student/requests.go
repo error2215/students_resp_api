@@ -63,7 +63,7 @@ func (r *request) ListStudents() []*student.Student {
 func (r *request) CreateStudent() error {
 	_, err := client.GetClient().Index().
 		Index(config.GlobalConfig.StudentsIndex).
-		BodyJson(r.bodyJSON).
+		BodyJson(r.body).
 		Id(strconv.Itoa(int(r.id))).
 		Refresh("true").
 		Do(context.Background())
