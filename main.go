@@ -18,19 +18,19 @@ func main() {
 	r.Route("/students", func(r chi.Router) {
 		r.Get("/", handlers.ListStudentsHandler) // get list of all students
 
-		r.Delete("{/id}", handlers.DeleteStudentHandler) // remove student
-		r.Put("/{id}", handlers.CreateStudentHandler)    // add new student
+		r.Delete("/{id}", handlers.DeleteStudentHandler) // remove student
+		r.Put("/", handlers.CreateStudentHandler)        // add new student
 		r.Get("/{id}", handlers.GetStudentHandler)       // get student by id
-		r.Post("/{id}", handlers.UpdateStudentHandler)   // update student's data
+		r.Post("/", handlers.UpdateStudentHandler)       // update student's data
 	})
 
 	r.Route("/lessons", func(r chi.Router) {
 		r.Get("/", handlers.ListLessonsHandler) // get list of all lessons
 
-		r.Delete("{/id}", handlers.DeleteLessonHandler) // remove lesson
-		r.Put("/{id}", handlers.CreateLessonHandler)    // add new student
+		r.Delete("/{id}", handlers.DeleteLessonHandler) // remove lesson
+		r.Put("/", handlers.CreateLessonHandler)        // add new student
 		r.Get("/{id}", handlers.GetLessonHandler)       // get lesson by id
-		r.Post("/{id}", handlers.UpdateLessonHandler)   // update lessons's data
+		r.Post("/", handlers.UpdateLessonHandler)       // update lessons's data
 	})
 
 	log.Info("Application started on port: " + config.GlobalConfig.AppPort)
