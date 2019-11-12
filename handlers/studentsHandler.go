@@ -49,12 +49,12 @@ func UpdateStudentHandler(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write(response.New(1, err.Error(), nil).ToString())
 		return
 	}
-	if err := elst.New().Body(student).CreateStudent(); err != nil {
-		logrus.Errorf("UpdateStudentHandler() CreateStudent() err: %v", err)
-		_, _ = w.Write(response.New(1, err.Error(), nil).ToString())
-		return
-	}
-	_, _ = w.Write(response.New(0, "", "true").ToString())
+	//if err := elst.New().Body(student).CreateStudent(); err != nil {
+	//	logrus.Errorf("UpdateStudentHandler() CreateStudent() err: %v", err)
+	//	_, _ = w.Write(response.New(1, err.Error(), nil).ToString())
+	//	return
+	//}
+	_, _ = w.Write(response.New(0, "", student).ToString())
 }
 
 func CreateStudentHandler(w http.ResponseWriter, r *http.Request) {

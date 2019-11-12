@@ -3,8 +3,11 @@ package student
 import (
 	"context"
 	"encoding/json"
-	"strconv"
 	"students_rest_api/models/student"
+
+	"github.com/olivere/elastic/v7"
+
+	"github.com/iostrovok/go-convert"
 
 	"students_rest_api/config"
 	client "students_rest_api/elastic"
@@ -61,10 +64,25 @@ func (r *request) ListStudents() []*student.Student {
 }
 
 func (r *request) CreateStudent() error {
+	r.body.Id = convert.Int32(getNewId())
 	_, err := client.GetClient().Index().
 		Index(config.GlobalConfig.StudentsIndex).
 		BodyJson(r.body).
-		Id(strconv.Itoa(int(r.id))).
+		Id(getNewId()).
+		Refresh("true").
+		Do(context.Background())
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+	return nil
+}
+
+func (r *request) UpdateStudent() error {
+	_, err := client.GetClient().Index().
+		Index(config.GlobalConfig.StudentsIndex).
+		BodyJson(r.body).
+		Id(convert.String(r.body.Id)).
 		Refresh("true").
 		Do(context.Background())
 	if err != nil {
@@ -77,7 +95,7 @@ func (r *request) CreateStudent() error {
 func (r *request) DeleteStudent() error {
 	_, err := client.GetClient().Delete().
 		Index(config.GlobalConfig.StudentsIndex).
-		Id(strconv.Itoa(int(r.id))).
+		Id(convert.String(r.id)).
 		Refresh("true").
 		Do(context.Background())
 	if err != nil {
@@ -85,4 +103,21 @@ func (r *request) DeleteStudent() error {
 		return err
 	}
 	return nil
+}
+
+func getNewId() string {
+	hits, err := client.GetClient().Search().
+		Index(config.GlobalConfig.StudentsIndex).
+		Query(elastic.NewBoolQuery()).
+		Sort("id", false).
+		Size(1).
+		Do(context.Background())
+	if err != nil {
+		log.Error(err)
+	}
+	if hits.TotalHits() == 0 {
+		return "0"
+	}
+	id := hits.Hits.Hits[0].Id
+	return convert.String(convert.Int32(id) + 1)
 }
