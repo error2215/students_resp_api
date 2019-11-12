@@ -23,3 +23,12 @@ func SliceToJson(students []*Student) (json.RawMessage, error) {
 	}
 	return encoded, nil
 }
+
+func (s *Student) ToJson() (json.RawMessage, error) {
+	encoded, err := json.Marshal(s)
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+	return encoded, nil
+}
